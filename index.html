@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Right Issue Kalkulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>Kalkulator Right Issue</h1>
+                <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+            <p class="subtitle left">Digunakan untuk:</p>
+            <ul class="subtitle left">
+                <li>Menghitung perkiraan <b>jumlah lembar Right Issue (RI)</b>,</li>
+                <li>Menghitung total <b>biaya yang dibutuhkan</b> untuk menebus Right Issue (RI),</li>
+                <li>Melihat apakah Right Issue <b>perlu ditebus atau tidak</b> setelah diketahui perkiraan average saham
+                    barunya.</li>
+            </ul>
+            <p class="subtitle left">Semakin rendah harga average barumu, semakin besar peluang profit dari penebusan
+                Right
+                Issue</p>
+        </header>
+
+        <main>
+            <!-- Section 1: Saham -->
+            <section id="section-saham" class="card">
+                <h2>Saham</h2>
+                <div class="saham-grid">
+                    <div class="saham-inputs">
+                        <div class="form-group">
+                            <label>Rasio (Lama : Baru)</label>
+                            <div class="ratio-inputs">
+                                <input type="number" id="ratio-old" placeholder="Rasio Lama" min="1">
+                                <span class="separator">:</span>
+                                <input type="number" id="ratio-new" placeholder="Rasio Baru" min="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="right-price">Harga Right Issue per lembar (Rp)</label>
+                            <input type="text" id="right-price" class="currency-input" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="cum-date-price">Harga saham perkiraan saat Cum Date (Rp)</label>
+                            <input type="text" id="cum-date-price" class="currency-input" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="saham-image">
+                        <img src="contoh.jpg" alt="Contoh Right Issue">
+                        <p class="image-caption">Contoh: Right Issue Saham PANI</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Kepemilikan Saham -->
+            <section id="section-ownership" class="card">
+                <h2>Kepemilikan Saham</h2>
+
+                <div class="ownership-grid">
+                    <!-- Column 1: Current -->
+                    <div class="ownership-col">
+                        <h3>Kepemilikan Saat Ini</h3>
+                        <div class="form-group">
+                            <label for="current-shares">Total Lembar Saham</label>
+                            <input type="text" id="current-shares" class="number-input" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="current-avg-price">Average Harga (Rp)</label>
+                            <input type="text" id="current-avg-price" class="currency-input" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Value</label>
+                            <div class="read-only-value" id="current-total-value">Rp 0</div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: New (Right Issue) -->
+                    <div class="ownership-col">
+                        <h3>Jatah Right Issue (RI)</h3>
+                        <div class="form-group">
+                            <label>Total Lembar RI</label>
+                            <div class="read-only-value" id="new-shares-count">0</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Average Harga RI</label>
+                            <div class="read-only-value" id="new-avg-price">Rp 0</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Value RI</label>
+                            <div class="read-only-value" id="new-total-value">Rp 0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider-line"></div>
+
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="label">Total Lembar Akhir</span>
+                        <span class="value" id="final-shares">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Average Harga Akhir</span>
+                        <span class="value" id="final-avg-price">Rp 0</span>
+                    </div>
+                    <div class="summary-item highlight">
+                        <span class="label">Total Value Akhir</span>
+                        <span class="value" id="final-total-value">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="action-area-internal">
+                    <button id="calculate-btn" disabled>Kalkulasi</button>
+                </div>
+            </section>
+
+            <!-- Section 3: Kesimpulan -->
+            <section id="section-conclusion" class="card">
+                <h2>Kesimpulan</h2>
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="label">Total Jatah Right Issue</span>
+                        <span class="value" id="conclusion-new-shares">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Harga Tebus Right Issue</span>
+                        <span class="value" id="conclusion-exercise-price">Rp 0</span>
+                    </div>
+                    <div class="summary-item highlight">
+                        <span class="label">Total Biaya Dibutuhkan Untuk Menebus Right Issue</span>
+                        <span class="value" id="conclusion-total-cost">Rp 0</span>
+                    </div>
+                </div>
+                <div class="conclusion-grid">
+                    <div class="info-item">
+                        <span class="label">Avg Harga Baru</span>
+                        <span class="value" id="conclusion-new-avg-price">-</span>
+                    </div>
+                    <div class="info-item highlight-box">
+                        <span class="label">Harga Teoritis</span>
+                        <span class="value" id="theoretical-price">-</span>
+                    </div>
+                </div>
+                <br>
+                <p class="disclaimer">TERP (Theoretical Ex-Right Price) adalah harga teoritis yang dapat dihitung dengan
+                    menggunakan formula: (Harga cum date x Rasio Lama) + (Harga tebus x Rasio Baru) / Rasio
+                    lama + Rasio baru)</p>
+
+                <div id="recommendation-box" class="recommendation-box hidden">
+                    <p id="recommendation-text"></p>
+                </div>
+            </section>
+
+            <div class="footer-area">
+                <p class="disclaimer"><b>Disclaimer:</b> Not a financial advice, always DYOR (Do Your Own Research).
+                    Tidak ada data yang direkam maupun dikirim ke server, semua data diproses di browser Anda secara
+                    lokal.</p>
+                <footer class="masthead">
+                    <p>Copyright 2025. Vibe-coded by <a href="https://x.com/ArnantoAkbar"
+                            target="_blank">@ArnantoAkbar</a>,
+                        Originally created by <a href="https://x.com/mikelsaham" target="_blank">@MikelSaham</a></p>
+                </footer>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
