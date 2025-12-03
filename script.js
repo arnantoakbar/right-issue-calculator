@@ -139,12 +139,11 @@ function updateCurrentTotalValue() {
 function updateNewAvgPrice() {
     newAvgPriceDisplay.textContent = formatCurrency(state.rightPrice);
     conclusionExercisePriceDisplay.textContent = formatCurrency(state.rightPrice);
-    conclusionNewAvgPriceDisplay.textContent = formatCurrency(state.rightPrice);
 }
 
 function updateConclusionRatio() {
     if (state.ratioOld && state.ratioNew) {
-        conclusionRatioDisplay.textContent = `${state.ratioOld}:${state.ratioNew} `;
+        conclusionRatioDisplay.textContent = `${state.ratioOld}:${state.ratioNew}`;
     } else {
         conclusionRatioDisplay.textContent = '-';
     }
@@ -210,19 +209,20 @@ function calculate() {
     // Update Conclusion Section
     conclusionNewSharesDisplay.textContent = formatNumber(newShares);
     conclusionTotalCostDisplay.textContent = formatCurrency(newTotalValue);
+    conclusionNewAvgPriceDisplay.textContent = formatCurrency(finalAvgPrice);
 
     // Recommendation Logic
-    // "Average Harga Baru" here refers to the Right Issue Price (as per user definition in read-only field)
-    const avgHargaBaru = state.rightPrice;
+    // "Average Harga Baru" now refers to the Final Average Price (as per user request)
+    const avgHargaBaru = finalAvgPrice;
 
     recommendationBox.classList.remove('hidden', 'buy', 'sell');
 
     if (avgHargaBaru < theoreticalPrice) {
         recommendationBox.classList.add('buy');
-        recommendationText.textContent = "Harga average baru Anda masih di bawah harga teoritis, Anda berpeluang tetap untung jika menebus Right Issue";
+        recommendationText.textContent = "Harga average baru Anda masih di bawah harga teoritis, direkomendasikan untuk tebus Right Issue";
     } else {
         recommendationBox.classList.add('sell');
-        recommendationText.textContent = "Harga average baru Anda sudah diatas harga teoritisnya, Anda berpeluang rugi jika menebus Right Issue";
+        recommendationText.textContent = "Harga average baru Anda sudah diatas harga teoritisnya, direkomendasikan untuk menjual Right Issue";
     }
 }
 
