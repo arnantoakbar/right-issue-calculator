@@ -36,13 +36,14 @@
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </button>
-            </div>
-            <p class="subtitle left">Digunakan untuk:</p>
+            </div><br>
+            <p class="subtitle left">Jika Anda memiliki saham di Indonesia dan emitennya mengumumkan untuk Right Issue,
+                Anda bisa gunakan Kalkulator ini untuk:</p>
             <ul class="subtitle left">
-                <li>Menghitung perkiraan <b>jumlah lembar Right Issue (RI)</b>,</li>
+                <li>Menghitung perkiraan <b>jumlah lembar Right Issue (RI)</b> yang bisa Anda tebus,</li>
                 <li>Menghitung total <b>biaya yang dibutuhkan</b> untuk menebus Right Issue (RI),</li>
                 <li>Melihat apakah Right Issue <b>perlu ditebus atau tidak</b> setelah diketahui perkiraan average saham
-                    barunya.</li>
+                    barunya jika ditebus.</li>
             </ul>
             <p class="subtitle left">Semakin rendah harga average barumu, semakin besar peluang profit dari penebusan
                 Right
@@ -58,18 +59,22 @@
                         <div class="form-group">
                             <label>Rasio (Lama : Baru)</label>
                             <div class="ratio-inputs">
-                                <input type="number" id="ratio-old" placeholder="Rasio Lama" min="1">
+                                <input type="text" id="ratio-old" placeholder="Rasio Lama" inputmode="numeric"
+                                    pattern="[0-9]*" maxlength="6">
                                 <span class="separator">:</span>
-                                <input type="number" id="ratio-new" placeholder="Rasio Baru" min="1">
+                                <input type="text" id="ratio-new" placeholder="Rasio Baru" inputmode="numeric"
+                                    pattern="[0-9]*" maxlength="6">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="right-price">Harga Right Issue per lembar (Rp)</label>
-                            <input type="text" id="right-price" class="currency-input" placeholder="0">
+                            <input type="text" id="right-price" class="currency-input" placeholder="0"
+                                inputmode="numeric" pattern="[0-9]*">
                         </div>
                         <div class="form-group">
                             <label for="cum-date-price">Harga saham perkiraan saat Cum Date (Rp)</label>
-                            <input type="text" id="cum-date-price" class="currency-input" placeholder="0">
+                            <input type="text" id="cum-date-price" class="currency-input" placeholder="0"
+                                inputmode="numeric" pattern="[0-9]*">
                         </div>
                     </div>
                     <div class="saham-image">
@@ -89,11 +94,13 @@
                         <h3>Kepemilikan Saat Ini</h3>
                         <div class="form-group">
                             <label for="current-shares">Total Lembar Saham</label>
-                            <input type="text" id="current-shares" class="number-input" placeholder="0">
+                            <input type="text" id="current-shares" class="number-input" placeholder="0"
+                                inputmode="numeric" pattern="[0-9]*">
                         </div>
                         <div class="form-group">
                             <label for="current-avg-price">Average Harga (Rp)</label>
-                            <input type="text" id="current-avg-price" class="currency-input" placeholder="0">
+                            <input type="text" id="current-avg-price" class="currency-input" placeholder="0"
+                                inputmode="numeric" pattern="[0-9]*">
                         </div>
                         <div class="form-group">
                             <label>Total Value</label>
@@ -183,9 +190,9 @@
                     Tidak ada data yang direkam maupun dikirim ke server, semua data diproses di browser Anda secara
                     lokal.</p>
                 <footer class="masthead">
-                    <p>Copyright 2025. Vibe-coded by <a href="https://x.com/ArnantoAkbar"
-                            target="_blank">@ArnantoAkbar</a>,
-                        Originally created by <a href="https://x.com/mikelsaham" target="_blank">@MikelSaham</a></p>
+                    <p>&copy; 2025. Originally created by <a href="https://x.com/mikelsaham"
+                            target="_blank">@MikelSaham</a>, Vibe-coded by <a href="https://x.com/ArnantoAkbar"
+                            target="_blank">@ArnantoAkbar</a></p><br>
                     <p class="repo-link">
                         <a href="https://github.com/arnantoakbar/right-issue-calculator" target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"

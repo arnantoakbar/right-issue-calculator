@@ -495,4 +495,11 @@ button:disabled {
         height: auto;
         margin-bottom: 0.5rem;
     }
+
+    /* Prevent zoom on mobile inputs */
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+        font-size: 16px;
+    }
 }

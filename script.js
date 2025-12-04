@@ -62,6 +62,21 @@ function toggleTheme() {
 function setupEventListeners() {
     themeToggleBtn.addEventListener('click', toggleTheme);
 
+    const allInputs = [
+        rightPriceInput, currentAvgPriceInput, cumDatePriceInput,
+        currentSharesInput, ratioOldInput, ratioNewInput
+    ];
+
+    // Scroll to input on focus
+    allInputs.forEach(input => {
+        input.addEventListener('focus', (e) => {
+            // Small delay to allow keyboard to appear
+            setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+    });
+
     // Inputs that require currency formatting
     [rightPriceInput, currentAvgPriceInput, cumDatePriceInput].forEach(input => {
         input.addEventListener('input', (e) => handleCurrencyInput(e));
@@ -70,25 +85,46 @@ function setupEventListeners() {
     // Inputs that require number formatting (shares)
     currentSharesInput.addEventListener('input', (e) => handleNumberInput(e));
 
-    // Regular inputs
-    ratioOldInput.addEventListener('input', (e) => {
-        state.ratioOld = parseFloat(e.target.value) || 0;
-        updateConclusionRatio();
-        validateInputs();
-    });
-
-    ratioNewInput.addEventListener('input', (e) => {
-        state.ratioNew = parseFloat(e.target.value) || 0;
-        updateConclusionRatio();
-        validateInputs();
+    // Ratio inputs
+    [ratioOldInput, ratioNewInput].forEach(input => {
+        input.addEventListener('input', (e) => handleRatioInput(e));
     });
 
     calculateBtn.addEventListener('click', calculate);
 }
 
 // Input Handlers
+function handleRatioInput(e) {
+    // Remove non-numeric characters
+    let value = e.target.value.replace(/\D/g, '');
+
+    // Limit to 6 digits
+    if (value.length > 6) {
+        value = value.slice(0, 6);
+    }
+
+    e.target.value = value;
+
+    // Update state
+    if (e.target.id === 'ratio-old') {
+        state.ratioOld = parseFloat(value) || 0;
+    } else {
+        state.ratioNew = parseFloat(value) || 0;
+    }
+
+    updateConclusionRatio();
+    validateInputs();
+}
+
 function handleCurrencyInput(e) {
-    const value = e.target.value.replace(/\D/g, '');
+    // Remove non-numeric characters
+    let value = e.target.value.replace(/\D/g, '');
+
+    // Limit to 6 digits (Price limit)
+    if (value.length > 6) {
+        value = value.slice(0, 6);
+    }
+
     const numberValue = parseFloat(value) || 0;
 
     // Update state based on input ID
@@ -113,7 +149,14 @@ function handleCurrencyInput(e) {
 }
 
 function handleNumberInput(e) {
-    const value = e.target.value.replace(/\D/g, '');
+    // Remove non-numeric characters
+    let value = e.target.value.replace(/\D/g, '');
+
+    // Limit to 13 digits (Shares limit)
+    if (value.length > 13) {
+        value = value.slice(0, 13);
+    }
+
     const numberValue = parseFloat(value) || 0;
 
     if (e.target.id === 'current-shares') {
@@ -219,10 +262,10 @@ function calculate() {
 
     if (avgHargaBaru < theoreticalPrice) {
         recommendationBox.classList.add('buy');
-        recommendationText.textContent = "Harga average baru Anda masih di bawah harga teoritis, direkomendasikan untuk tebus Right Issue";
+        recommendationText.textContent = "Harga average baru Anda masih di BAWAH harga teoritis, Anda masih berpeluang untung jika menebus Right Issue";
     } else {
         recommendationBox.classList.add('sell');
-        recommendationText.textContent = "Harga average baru Anda sudah diatas harga teoritisnya, direkomendasikan untuk menjual Right Issue";
+        recommendationText.textContent = "Harga average baru Anda sudah di ATAS harga teoritisnya, Anda berpeluang rugi jika tetap menebus Right Issue";
     }
 }
 
