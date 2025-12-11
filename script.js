@@ -95,8 +95,11 @@ function setupEventListeners() {
 
 // Input Handlers
 function handleRatioInput(e) {
-    // Remove non-numeric characters but allow one decimal point
-    let value = e.target.value.replace(/[^0-9.]/g, '');
+    // Remove non-numeric characters but allow one decimal point (dot or comma)
+    let value = e.target.value.replace(/[^0-9.,]/g, '');
+
+    // Replace comma with dot
+    value = value.replace(/,/g, '.');
 
     // Prevent multiple decimal points
     const parts = value.split('.');
