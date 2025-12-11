@@ -95,12 +95,18 @@ function setupEventListeners() {
 
 // Input Handlers
 function handleRatioInput(e) {
-    // Remove non-numeric characters
-    let value = e.target.value.replace(/\D/g, '');
+    // Remove non-numeric characters but allow one decimal point
+    let value = e.target.value.replace(/[^0-9.]/g, '');
 
-    // Limit to 6 digits
-    if (value.length > 6) {
-        value = value.slice(0, 6);
+    // Prevent multiple decimal points
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    // Limit to reasonable length (e.g. 10 chars) to prevent overflow but allow precision
+    if (value.length > 10) {
+        value = value.slice(0, 10);
     }
 
     e.target.value = value;

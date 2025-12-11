@@ -16,6 +16,7 @@
         <header>
             <div class="header-top">
                 <h1>Kalkulator Right Issue</h1>
+
                 <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
                     <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -53,17 +54,17 @@
         <main>
             <!-- Section 1: Saham -->
             <section id="section-saham" class="card">
-                <h2>Saham</h2>
+                <h2>Informasi Right Issue Saham</h2>
                 <div class="saham-grid">
                     <div class="saham-inputs">
                         <div class="form-group">
                             <label>Rasio (Lama : Baru)</label>
                             <div class="ratio-inputs">
-                                <input type="text" id="ratio-old" placeholder="Rasio Lama" inputmode="numeric"
-                                    pattern="[0-9]*" maxlength="6">
+                                <input type="text" id="ratio-old" placeholder="Rasio Lama" inputmode="decimal"
+                                    pattern="[0-9]*[.,]?[0-9]*">
                                 <span class="separator">:</span>
-                                <input type="text" id="ratio-new" placeholder="Rasio Baru" inputmode="numeric"
-                                    pattern="[0-9]*" maxlength="6">
+                                <input type="text" id="ratio-new" placeholder="Rasio Baru" inputmode="decimal"
+                                    pattern="[0-9]*[.,]?[0-9]*">
                             </div>
                         </div>
                         <div class="form-group">
@@ -93,7 +94,7 @@
                     <div class="ownership-col">
                         <h3>Kepemilikan Saat Ini</h3>
                         <div class="form-group">
-                            <label for="current-shares">Total Lembar Saham</label>
+                            <label for="current-shares">Total Lembar Saham (1 lot = 100 lembar)</label>
                             <input type="text" id="current-shares" class="number-input" placeholder="0"
                                 inputmode="numeric" pattern="[0-9]*">
                         </div>
@@ -130,7 +131,7 @@
 
                 <div class="summary-row">
                     <div class="summary-item">
-                        <span class="label">Total Lembar Akhir</span>
+                        <span class="label">Total Lembar Saham Akhir</span>
                         <span class="value" id="final-shares">0</span>
                     </div>
                     <div class="summary-item">
@@ -153,15 +154,15 @@
                 <h2>Kesimpulan</h2>
                 <div class="summary-row">
                     <div class="summary-item">
-                        <span class="label">Total Jatah Right Issue</span>
+                        <span class="label">Total Jatah Right Issue (lembar)</span>
                         <span class="value" id="conclusion-new-shares">0</span>
                     </div>
                     <div class="summary-item">
-                        <span class="label">Harga Tebus Right Issue</span>
+                        <span class="label">Harga Tebus Right Issue (Rp)</span>
                         <span class="value" id="conclusion-exercise-price">Rp 0</span>
                     </div>
                     <div class="summary-item highlight">
-                        <span class="label">Total Biaya Dibutuhkan Untuk Menebus Right Issue</span>
+                        <span class="label">Total Biaya Untuk Menebus Right Issue (Rp)</span>
                         <span class="value" id="conclusion-total-cost">Rp 0</span>
                     </div>
                 </div>
@@ -177,7 +178,7 @@
                 </div>
                 <br>
                 <p class="disclaimer">TERP (Theoretical Ex-Right Price) adalah harga teoritis yang dapat dihitung dengan
-                    menggunakan formula: (Harga cum date x Rasio Lama) + (Harga tebus x Rasio Baru) / Rasio
+                    menggunakan formula: (Harga cum date x Rasio Lama) + (Harga tebus x Rasio Baru) / (Rasio
                     lama + Rasio baru)</p>
 
                 <div id="recommendation-box" class="recommendation-box hidden">
