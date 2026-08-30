@@ -1,33 +1,64 @@
 # Kalkulator Right Issue
 
-Aplikasi web sederhana untuk menghitung potensi keuntungan dan biaya penebusan Right Issue saham di Indonesia. Aplikasi ini membantu investor menghitung Theoretical Ex-Right Price (TERP), jumlah lembar saham baru yang akan didapatkan, dan total dana yang dibutuhkan untuk menebus Right Issue.
+Aplikasi web untuk menghitung potensi keuntungan dan biaya penebusan **Right Issue (RI)** saham di Indonesia. Didesain ulang dengan **Arnanto Design System** — paper/snow surfaces, walnut accent, IBM Plex Mono labels, light/dark mode.
+
+**Live di:** <https://arnan.to/right-issue/>
+
+![Light mode](screenshots/light.jpg)
+
+![Dark mode](screenshots/dark.jpg)
 
 ## Fitur
 
-- **Kalkulasi Otomatis**: Menghitung jumlah lembar baru, total biaya tebus, harga teoritis, dan rata-rata harga saham setelah Right Issue.
-- **Rekomendasi Cerdas**: Memberikan saran otomatis apakah sebaiknya menebus atau menjual Right Issue berdasarkan perbandingan harga rata-rata baru dengan harga teoritis.
-- **Privasi Terjamin**: Semua perhitungan dilakukan secara lokal di browser Anda. Tidak ada data yang dikirim ke server.
-- **Tampilan Responsif**: Desain yang ramah pengguna dan responsif untuk desktop maupun perangkat mobile.
-- **Mode Gelap/Terang**: Dukungan tema gelap dan terang untuk kenyamanan mata.
+- **Kalkulasi Otomatis** — menghitung jumlah lembar baru (jatah RI), total biaya tebus, average harga baru, dan harga teoritis (TERP).
+- **Rekomendasi Cerdas** — saran otomatis tebus/tidak berdasarkan perbandingan average harga baru dengan harga teoritis.
+- **Mode Gelap/Terang** — tema tersimpan di `localStorage` (`arnanto.theme`), sinkron dengan tool Arnanto lainnya.
+- **Mobile-first** — layout responsif untuk desktop maupun perangkat mobile.
+- **Privasi Terjamin** — semua perhitungan diproses lokal di browser. Tidak ada data yang dikirim ke server.
 
 ## Cara Menggunakan
 
-1.  **Buka Aplikasi**: Buka file `index.html` di browser web Anda.
-2.  **Masukkan Data Saham**:
-    - **Rasio**: Masukkan rasio Right Issue (Lama : Baru).
-    - **Harga Right Issue**: Masukkan harga pelaksanaan (exercise price).
-    - **Harga Cum Date**: Masukkan harga saham pada saat Cum Date.
-3.  **Masukkan Data Kepemilikan**:
-    - **Total Lembar Saham**: Jumlah saham yang Anda miliki saat ini.
-    - **Average Harga**: Harga rata-rata pembelian saham Anda saat ini.
-4.  **Kalkulasi**: Klik tombol "Kalkulasi".
-5.  **Hasil**: Lihat ringkasan di bagian "Kesimpulan" dan baca rekomendasi yang diberikan.
+1. **Buka aplikasi**: <https://arnan.to/right-issue/>
+2. **Masukkan data Right Issue**:
+   - **Rasio (Lama : Baru)** — rasio HMETD (mis. `1 : 2`).
+   - **Harga Right Issue** — harga pelaksanaan (exercise price) per lembar.
+   - **Harga Cum Date** — perkiraan harga saham saat cum date.
+3. **Masukkan data kepemilikan**:
+   - **Total Lembar Saham** — jumlah saham yang dimiliki (1 lot = 100 lembar).
+   - **Average Harga** — harga rata-rata pembelian saham saat ini.
+4. Klik **Kalkulasi**.
+5. Lihat hasil di **Kesimpulan** dan rekomendasi tebus/tidak.
+
+Referensi contoh tersedia di dalam aplikasi (Right Issue PANI) — klik "Lihat contoh".
+
+## Rumus
+
+**TERP (Theoretical Ex-Right Price):**
+
+```
+TERP = ((Harga cum date × Rasio Lama) + (Harga tebus × Rasio Baru)) ÷ (Rasio Lama + Rasio Baru)
+```
+
+Rekomendasi:
+
+- `Average harga baru < TERP` → masih berpeluang untung jika menebus RI.
+- `Average harga baru ≥ TERP` → berpeluang rugi jika tetap menebus RI.
 
 ## Teknologi
 
-- HTML5
-- CSS3 (Vanilla CSS)
-- JavaScript (Vanilla JS)
+- HTML5 + CSS3 + JavaScript (Vanilla) — **single file** `index.html`, tanpa build step.
+- Arnanto Design System (tokens, typography Inter + IBM Plex Mono).
+- Font: Google Fonts (Inter, IBM Plex Mono).
+
+## Struktur
+
+```
+index.html          — aplikasi lengkap (HTML + CSS + JS inline)
+contoh.jpg          — contoh kasus Right Issue PANI
+screenshots/        — tangkapan layar (light & dark mode)
+```
+
+> Catatan: versi lama (`script.js`, `style.css`) digabung ke dalam `index.html` pada desain ulang ini. Diperbaiki juga bug: elemen `#conclusion-ratio` yang direferensikan `script.js` tapi tidak ada di HTML — sebelumnya menyebabkan error saat input rasio.
 
 ## Kredit
 
@@ -37,3 +68,7 @@ Aplikasi web sederhana untuk menghitung potensi keuntungan dan biaya penebusan R
 ## Lisensi
 
 Project ini bersifat open-source dan bebas digunakan untuk keperluan pribadi.
+
+---
+
+**Disclaimer:** Bukan financial advice, selalu DYOR (Do Your Own Research).

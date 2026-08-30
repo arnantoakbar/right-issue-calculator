@@ -1,219 +1,519 @@
 <!DOCTYPE html>
-<html lang="id">
-
+<html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Right Issue Kalkulator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Right Issue — arnan.to</title>
+<meta name="description" content="Hitung jatah lembar Right Issue (RI), total biaya tebus, dan rekomendasi tebus/tidak — semua diproses lokal di browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═════════════════════════════════════════════════════════
+   Arnanto Design System — tokens
+   ═════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+
+  --ink:#1A1714; --steel:#6B6B6B; --mist:#A8A8A8;
+  --paper:#F5F2EC; --snow:#FBFAF7; --bone:#EDEAE4;
+  --walnut:#8B6F47;
+  --green:#2D6A4F; --red:#B91C1C;
+
+  --hairline:rgba(26,23,20,0.10); --hairline-strong:rgba(26,23,20,0.18);
+  --r-sm:4px; --r-md:8px; --r-lg:12px;
+  --gutter:24px; --shell-w:960px;
+}
+[data-theme="dark"] {
+  --ink:#F5F2EC; --steel:#A8A8A8; --mist:#6B6B6B;
+  --paper:#0F0E0C; --snow:#1A1918; --bone:#201F1D;
+  --walnut:#C49866;
+  --green:#4C9A6E; --red:#E05C50;
+  --hairline:rgba(245,242,236,0.10); --hairline-strong:rgba(245,242,236,0.20);
+}
+@media (max-width:760px){:root{--gutter:16px;}}
+
+html { background:var(--paper); color:var(--ink); font-family:var(--sans); }
+body { min-height:100vh; display:flex; flex-direction:column; }
+.shell { width:100%; max-width:var(--shell-w); margin:0 auto; padding:0 var(--gutter); flex:1; }
+[hidden]{display:none !important;}
+
+/* ─── Topbar ──────────────────────────────────────────── */
+.topbar { position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 var(--gutter); height:56px; background:var(--paper); border-bottom:1px solid var(--hairline); }
+.wm { font-family:var(--mono); font-weight:700; font-size:15px; letter-spacing:0.02em; display:inline-flex; align-items:baseline; color:var(--ink); text-decoration:none; }
+.wm .dot-a { display:inline-block; width:0.22em; height:0.22em; border-radius:50% 50% 0 50%; background:var(--walnut); margin:0 0.01em; transform:translateY(-0.05em); }
+.theme-toggle { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:0.10em; background:transparent; border:1px solid var(--hairline-strong); border-radius:var(--r-sm); padding:6px 12px; color:var(--steel); cursor:pointer; transition:color .15s,border-color .15s; }
+.theme-toggle:hover { color:var(--walnut); border-color:var(--walnut); }
+
+/* ─── Page head ───────────────────────────────────────── */
+.page-head { padding:40px 0 8px; }
+.label { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--walnut); }
+.page-head h1 { font-size:28px; font-weight:700; letter-spacing:-0.02em; margin:8px 0 10px; }
+.page-head p { font-size:14px; font-weight:300; line-height:1.7; color:var(--steel); max-width:62ch; }
+
+/* ─── Cards ───────────────────────────────────────────── */
+.card { background:var(--snow); border:1px solid var(--hairline); border-radius:var(--r-lg); padding:22px; margin-top:18px; }
+.card-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--hairline); }
+.card-hd h2 { font-size:15px; font-weight:700; letter-spacing:-0.01em; }
+.rule { border-top:1px solid var(--hairline); margin:18px 0; }
+
+/* ─── Fields ──────────────────────────────────────────── */
+.field { margin-bottom:14px; }
+.field-label { display:block; font-family:var(--mono); font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.12em; color:var(--steel); margin-bottom:6px; }
+.field input { width:100%; padding:11px 14px; background:var(--paper); border:1px solid var(--hairline); border-radius:var(--r-sm); font-family:var(--mono); font-size:16px; font-weight:500; color:var(--ink); outline:none; transition:border-color .15s,box-shadow .15s; }
+.field input:focus { border-color:var(--walnut); box-shadow:0 0 0 2px rgba(139,111,71,0.14); }
+.field input::placeholder { color:var(--mist); font-weight:400; }
+.ratio-row { display:flex; align-items:center; gap:10px; }
+.ratio-row input { flex:1 1 0; min-width:0; text-align:center; }
+.ratio-sep { font-family:var(--mono); color:var(--mist); font-size:15px; }
+
+/* ─── Info grid ───────────────────────────────────────── */
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.example { background:var(--bone); border:1px solid var(--hairline); border-radius:var(--r-md); padding:12px 14px; }
+.example summary { font-family:var(--mono); font-size:11px; letter-spacing:0.06em; color:var(--steel); cursor:pointer; user-select:none; }
+.example summary:hover { color:var(--walnut); }
+.example img { width:100%; border-radius:var(--r-sm); margin-top:10px; border:1px solid var(--hairline); }
+.example-caption { font-family:var(--mono); font-size:10px; color:var(--mist); margin-top:8px; line-height:1.6; }
+
+/* ─── Ownership grid ──────────────────────────────────── */
+.own-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.own-col { display:flex; flex-direction:column; gap:0; }
+.col-title { font-family:var(--mono); font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.14em; color:var(--walnut); margin-bottom:12px; }
+.readout { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 14px; background:var(--paper); border:1px solid var(--hairline); border-radius:var(--r-sm); margin-bottom:10px; }
+.readout-label { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--steel); }
+.readout-value { font-family:var(--mono); font-size:14px; font-weight:600; color:var(--ink); text-align:right; }
+
+/* ─── Summary rows ────────────────────────────────────── */
+.summary-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.summary-item { background:var(--paper); border:1px solid var(--hairline); border-radius:var(--r-md); padding:14px 16px; }
+.summary-item.highlight { border-color:var(--walnut); background:rgba(139,111,71,0.06); }
+.summary-label { display:block; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--steel); margin-bottom:8px; }
+.summary-value { display:block; font-family:var(--mono); font-size:17px; font-weight:600; color:var(--ink); line-height:1.2; }
+
+.conclusion-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.info-item { background:var(--paper); border:1px solid var(--hairline); border-radius:var(--r-md); padding:14px 16px; }
+.terp-note { font-family:var(--mono); font-size:10px; color:var(--mist); line-height:1.7; margin-top:12px; padding:10px 14px; background:var(--bone); border:1px solid var(--hairline); border-radius:var(--r-sm); }
+
+/* ─── Button + recommendation ─────────────────────────── */
+.btn-calc { display:block; width:100%; margin-top:18px; padding:13px; border:none; border-radius:999px; background:var(--walnut); color:var(--snow); font-family:var(--mono); font-size:14px; font-weight:700; letter-spacing:0.08em; cursor:pointer; transition:opacity .15s,transform .15s; }
+.btn-calc:hover:not(:disabled) { opacity:.88; transform:translateY(-1px); }
+.btn-calc:disabled { opacity:.35; cursor:not-allowed; }
+
+.recommendation-box { margin-top:14px; padding:16px 18px; border-radius:var(--r-md); border:1px solid; font-size:13px; font-weight:500; line-height:1.6; }
+.recommendation-box.buy { background:rgba(45,106,79,0.08); border-color:rgba(45,106,79,0.35); color:var(--green); }
+.recommendation-box.sell { background:rgba(185,28,28,0.08); border-color:rgba(185,28,28,0.35); color:var(--red); }
+
+/* ─── Footer ──────────────────────────────────────────── */
+.site-footer { margin-top:32px; padding:20px var(--gutter) 26px; border-top:1px solid var(--hairline); text-align:center; }
+.disclaimer { font-size:11px; color:var(--mist); line-height:1.7; max-width:70ch; margin:0 auto 8px; }
+.credits { font-family:var(--mono); font-size:10px; color:var(--mist); }
+.credits a { color:var(--steel); text-decoration:none; border-bottom:1px solid var(--hairline-strong); }
+.credits a:hover { color:var(--walnut); border-color:var(--walnut); }
+
+/* ─── Responsive ──────────────────────────────────────── */
+@media (max-width:760px) {
+  .page-head { padding:26px 0 4px; }
+  .page-head h1 { font-size:23px; }
+  .info-grid, .own-grid { grid-template-columns:1fr; gap:14px; }
+  .summary-row { grid-template-columns:1fr; }
+  .conclusion-grid { grid-template-columns:1fr; }
+  .card { padding:16px; }
+  .summary-value { font-size:15px; }
+}
+</style>
+<script>
+/* Set theme before paint */
+(function(){
+  try {
+    var t = localStorage.getItem('arnanto.theme') || localStorage.getItem('arnanto-theme') || localStorage.getItem('theme');
+    if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  } catch(e){}
+})();
+</script>
 </head>
-
 <body>
-    <div class="container">
-        <header>
-            <div class="header-top">
-                <h1>Kalkulator Right Issue</h1>
 
-                <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
-                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                </button>
-            </div><br>
-            <p class="subtitle left">Jika Anda memiliki saham di Indonesia dan emitennya mengumumkan untuk Right Issue,
-                Anda bisa gunakan Kalkulator ini untuk:</p>
-            <ul class="subtitle left">
-                <li>Menghitung perkiraan <b>jumlah lembar Right Issue (RI)</b> yang bisa Anda tebus,</li>
-                <li>Menghitung total <b>biaya yang dibutuhkan</b> untuk menebus Right Issue (RI),</li>
-                <li>Melihat apakah Right Issue <b>perlu ditebus atau tidak</b> setelah diketahui perkiraan average saham
-                    barunya jika ditebus.</li>
-            </ul>
-            <p class="subtitle left">Semakin rendah harga average barumu, semakin besar peluang profit dari penebusan
-                Right
-                Issue</p>
-        </header>
+<header class="topbar">
+  <a class="wm" href="https://arnan.to" aria-label="arnan.to home">arnan<span class="dot-a"></span>to</a>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">DARK</button>
+</header>
 
-        <main>
-            <!-- Section 1: Saham -->
-            <section id="section-saham" class="card">
-                <h2>Informasi Right Issue Saham</h2>
-                <div class="saham-grid">
-                    <div class="saham-inputs">
-                        <div class="form-group">
-                            <label>Rasio (Lama : Baru)</label>
-                            <div class="ratio-inputs">
-                                <input type="text" id="ratio-old" placeholder="Rasio Lama" inputmode="decimal"
-                                    pattern="[0-9]*[.,]?[0-9]*">
-                                <span class="separator">:</span>
-                                <input type="text" id="ratio-new" placeholder="Rasio Baru" inputmode="decimal"
-                                    pattern="[0-9]*[.,]?[0-9]*">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="right-price">Harga Right Issue per lembar (Rp)</label>
-                            <input type="text" id="right-price" class="currency-input" placeholder="0"
-                                inputmode="numeric" pattern="[0-9]*">
-                        </div>
-                        <div class="form-group">
-                            <label for="cum-date-price">Harga saham perkiraan saat Cum Date (Rp)</label>
-                            <input type="text" id="cum-date-price" class="currency-input" placeholder="0"
-                                inputmode="numeric" pattern="[0-9]*">
-                        </div>
-                    </div>
-                    <div class="saham-image">
-                        <img src="contoh.jpg" alt="Contoh Right Issue">
-                        <p class="image-caption">Contoh: Right Issue Saham PANI</p>
-                    </div>
-                </div>
-            </section>
+<main class="shell">
+  <section class="page-head">
+    <div class="label">Tool · Saham</div>
+    <h1>Kalkulator Right Issue</h1>
+    <p>Jika Anda memiliki saham di Indonesia dan emitennya mengumumkan Right Issue, gunakan kalkulator ini untuk menghitung perkiraan jumlah lembar RI yang bisa ditebus, total biaya yang dibutuhkan, dan melihat apakah RI perlu ditebus atau tidak. Semakin rendah average harga baru Anda, semakin besar peluang profit dari penebusan.</p>
+  </section>
 
-            <!-- Section 2: Kepemilikan Saham -->
-            <section id="section-ownership" class="card">
-                <h2>Kepemilikan Saham</h2>
-
-                <div class="ownership-grid">
-                    <!-- Column 1: Current -->
-                    <div class="ownership-col">
-                        <h3>Kepemilikan Saat Ini</h3>
-                        <div class="form-group">
-                            <label for="current-shares">Total Lembar Saham (1 lot = 100 lembar)</label>
-                            <input type="text" id="current-shares" class="number-input" placeholder="0"
-                                inputmode="numeric" pattern="[0-9]*">
-                        </div>
-                        <div class="form-group">
-                            <label for="current-avg-price">Average Harga (Rp)</label>
-                            <input type="text" id="current-avg-price" class="currency-input" placeholder="0"
-                                inputmode="numeric" pattern="[0-9]*">
-                        </div>
-                        <div class="form-group">
-                            <label>Total Value</label>
-                            <div class="read-only-value" id="current-total-value">Rp 0</div>
-                        </div>
-                    </div>
-
-                    <!-- Column 2: New (Right Issue) -->
-                    <div class="ownership-col">
-                        <h3>Jatah Right Issue (RI)</h3>
-                        <div class="form-group">
-                            <label>Total Lembar RI</label>
-                            <div class="read-only-value" id="new-shares-count">0</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Average Harga RI</label>
-                            <div class="read-only-value" id="new-avg-price">Rp 0</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Total Value RI</label>
-                            <div class="read-only-value" id="new-total-value">Rp 0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="divider-line"></div>
-
-                <div class="summary-row">
-                    <div class="summary-item">
-                        <span class="label">Total Lembar Saham Akhir</span>
-                        <span class="value" id="final-shares">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="label">Average Harga Akhir</span>
-                        <span class="value" id="final-avg-price">Rp 0</span>
-                    </div>
-                    <div class="summary-item highlight">
-                        <span class="label">Total Value Akhir</span>
-                        <span class="value" id="final-total-value">Rp 0</span>
-                    </div>
-                </div>
-
-                <div class="action-area-internal">
-                    <button id="calculate-btn" disabled>Kalkulasi</button>
-                </div>
-            </section>
-
-            <!-- Section 3: Kesimpulan -->
-            <section id="section-conclusion" class="card">
-                <h2>Kesimpulan</h2>
-                <div class="summary-row">
-                    <div class="summary-item">
-                        <span class="label">Total Jatah Right Issue (lembar)</span>
-                        <span class="value" id="conclusion-new-shares">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="label">Harga Tebus Right Issue (Rp)</span>
-                        <span class="value" id="conclusion-exercise-price">Rp 0</span>
-                    </div>
-                    <div class="summary-item highlight">
-                        <span class="label">Total Biaya Untuk Menebus Right Issue (Rp)</span>
-                        <span class="value" id="conclusion-total-cost">Rp 0</span>
-                    </div>
-                </div>
-                <div class="conclusion-grid">
-                    <div class="info-item">
-                        <span class="label">Avg Harga Baru</span>
-                        <span class="value" id="conclusion-new-avg-price">-</span>
-                    </div>
-                    <div class="info-item highlight-box">
-                        <span class="label">Harga Teoritis</span>
-                        <span class="value" id="theoretical-price">-</span>
-                    </div>
-                </div>
-                <br>
-                <p class="disclaimer">TERP (Theoretical Ex-Right Price) adalah harga teoritis yang dapat dihitung dengan
-                    menggunakan formula: (Harga cum date x Rasio Lama) + (Harga tebus x Rasio Baru) / (Rasio
-                    lama + Rasio baru)</p>
-
-                <div id="recommendation-box" class="recommendation-box hidden">
-                    <p id="recommendation-text"></p>
-                </div>
-            </section>
-
-            <div class="footer-area">
-                <p class="disclaimer"><b>Disclaimer:</b> Not a financial advice, always DYOR (Do Your Own Research).
-                    Tidak ada data yang direkam maupun dikirim ke server, semua data diproses di browser Anda secara
-                    lokal.</p>
-                <footer class="masthead">
-                    <p>&copy; 2025. Originally created by <a href="https://x.com/mikelsaham"
-                            target="_blank">@MikelSaham</a>, Vibe-coded by <a href="https://x.com/ArnantoAkbar"
-                            target="_blank">@ArnantoAkbar</a></p><br>
-                    <p class="repo-link">
-                        <a href="https://github.com/arnantoakbar/right-issue-calculator" target="_blank">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="github-icon">
-                                <path
-                                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                </path>
-                            </svg>
-                            Contribute on GitHub
-                        </a>
-                    </p>
-                </footer>
-            </div>
-        </main>
+  <!-- Section 1: Info Right Issue -->
+  <section class="card">
+    <div class="card-hd"><h2>Informasi Right Issue Saham</h2></div>
+    <div class="info-grid">
+      <div class="info-inputs">
+        <div class="field">
+          <label class="field-label" for="ratio-old">Rasio (Lama : Baru)</label>
+          <div class="ratio-row">
+            <input type="text" id="ratio-old" placeholder="Rasio Lama" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
+            <span class="ratio-sep">:</span>
+            <input type="text" id="ratio-new" placeholder="Rasio Baru" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="right-price">Harga Right Issue per Lembar (Rp)</label>
+          <input type="text" id="right-price" class="currency-input" placeholder="0" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <div class="field">
+          <label class="field-label" for="cum-date-price">Harga Saham Perkiraan saat Cum Date (Rp)</label>
+          <input type="text" id="cum-date-price" class="currency-input" placeholder="0" inputmode="numeric" pattern="[0-9]*">
+        </div>
+      </div>
+      <details class="example">
+        <summary>Lihat contoh — Right Issue PANI</summary>
+        <img src="contoh.jpg" alt="Contoh Right Issue Saham PANI">
+        <p class="example-caption">Rasio 50.831 : 3.646 · Harga tebus Rp 12.975 · Cum date 8 Des 2025</p>
+      </details>
     </div>
-    <script src="script.js"></script>
-    <!-- 100% privacy-first analytics -->
-    <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  </section>
 
+  <!-- Section 2: Kepemilikan -->
+  <section class="card">
+    <div class="card-hd"><h2>Kepemilikan Saham</h2></div>
+    <div class="own-grid">
+      <div class="own-col">
+        <h3 class="col-title">Kepemilikan Saat Ini</h3>
+        <div class="field">
+          <label class="field-label" for="current-shares">Total Lembar Saham (1 lot = 100 lembar)</label>
+          <input type="text" id="current-shares" class="number-input" placeholder="0" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <div class="field">
+          <label class="field-label" for="current-avg-price">Average Harga (Rp)</label>
+          <input type="text" id="current-avg-price" class="currency-input" placeholder="0" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <div class="readout">
+          <span class="readout-label">Total Value</span>
+          <span class="readout-value" id="current-total-value">Rp 0</span>
+        </div>
+      </div>
+      <div class="own-col">
+        <h3 class="col-title">Jatah Right Issue (RI)</h3>
+        <div class="readout"><span class="readout-label">Total Lembar RI</span><span class="readout-value" id="new-shares-count">0</span></div>
+        <div class="readout"><span class="readout-label">Average Harga RI</span><span class="readout-value" id="new-avg-price">Rp 0</span></div>
+        <div class="readout"><span class="readout-label">Total Value RI</span><span class="readout-value" id="new-total-value">Rp 0</span></div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <div class="summary-row">
+      <div class="summary-item"><span class="summary-label">Total Lembar Akhir</span><span class="summary-value" id="final-shares">0</span></div>
+      <div class="summary-item"><span class="summary-label">Average Harga Akhir</span><span class="summary-value" id="final-avg-price">Rp 0</span></div>
+      <div class="summary-item highlight"><span class="summary-label">Total Value Akhir</span><span class="summary-value" id="final-total-value">Rp 0</span></div>
+    </div>
+
+    <button id="calculate-btn" class="btn-calc" disabled>Kalkulasi</button>
+  </section>
+
+  <!-- Section 3: Kesimpulan -->
+  <section class="card">
+    <div class="card-hd"><h2>Kesimpulan</h2></div>
+    <div class="summary-row">
+      <div class="summary-item"><span class="summary-label">Total Jatah RI (lembar)</span><span class="summary-value" id="conclusion-new-shares">0</span></div>
+      <div class="summary-item"><span class="summary-label">Harga Tebus RI (Rp)</span><span class="summary-value" id="conclusion-exercise-price">Rp 0</span></div>
+      <div class="summary-item highlight"><span class="summary-label">Total Biaya Menebus RI</span><span class="summary-value" id="conclusion-total-cost">Rp 0</span></div>
+    </div>
+    <div class="conclusion-grid">
+      <div class="info-item"><span class="summary-label">Avg Harga Baru</span><span class="summary-value" id="conclusion-new-avg-price">-</span></div>
+      <div class="info-item"><span class="summary-label">Harga Teoritis (TERP)</span><span class="summary-value" id="theoretical-price">-</span></div>
+    </div>
+    <p class="terp-note">TERP (Theoretical Ex-Right Price) = ((Harga cum date × Rasio Lama) + (Harga tebus × Rasio Baru)) ÷ (Rasio lama + Rasio baru)</p>
+
+    <div id="recommendation-box" class="recommendation-box hidden">
+      <p id="recommendation-text"></p>
+    </div>
+    <!-- dibutuhkan oleh script.js (updateConclusionRatio) -->
+    <span id="conclusion-ratio" hidden></span>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p class="disclaimer"><b>Disclaimer:</b> Not a financial advice, always DYOR (Do Your Own Research). Tidak ada data yang direkam maupun dikirim ke server — semua data diproses di browser Anda secara lokal.</p>
+  <p class="credits">© 2025 · Originally created by <a href="https://x.com/mikelsaham" target="_blank" rel="noopener">@MikelSaham</a> · Vibe-coded by <a href="https://x.com/ArnantoAkbar" target="_blank" rel="noopener">@ArnantoAkbar</a> · <a href="https://github.com/arnantoakbar/right-issue-calculator" target="_blank" rel="noopener">GitHub</a></p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Theme (Arnanto convention: data-theme + arnanto.theme) ──
+  var THEME_KEY = "arnanto.theme";
+  var root = document.documentElement;
+  var toggleBtn = document.getElementById("theme-toggle");
+
+  function currentTheme() {
+    return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+  function applyTheme(t) {
+    root.setAttribute("data-theme", t);
+    toggleBtn.textContent = t === "dark" ? "LIGHT" : "DARK";
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+  }
+  function initTheme() {
+    var stored = null;
+    try { stored = localStorage.getItem(THEME_KEY) || localStorage.getItem("arnanto-theme") || localStorage.getItem("theme"); } catch (e) {}
+    var t = stored || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    root.setAttribute("data-theme", t);
+    toggleBtn.textContent = t === "dark" ? "LIGHT" : "DARK";
+  }
+  toggleBtn.addEventListener("click", function () {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark");
+  });
+
+  // ── Stock data is loaded from stock-data.js ──
+  // DOM Elements
+  var ratioOldInput = document.getElementById('ratio-old');
+  var ratioNewInput = document.getElementById('ratio-new');
+  var rightPriceInput = document.getElementById('right-price');
+
+  var currentSharesInput = document.getElementById('current-shares');
+  var currentAvgPriceInput = document.getElementById('current-avg-price');
+  var currentTotalValueDisplay = document.getElementById('current-total-value');
+
+  var newSharesCountDisplay = document.getElementById('new-shares-count');
+  var newAvgPriceDisplay = document.getElementById('new-avg-price');
+  var newTotalValueDisplay = document.getElementById('new-total-value');
+
+  var finalSharesDisplay = document.getElementById('final-shares');
+  var finalAvgPriceDisplay = document.getElementById('final-avg-price');
+  var finalTotalValueDisplay = document.getElementById('final-total-value');
+
+  var cumDatePriceInput = document.getElementById('cum-date-price');
+  var conclusionNewSharesDisplay = document.getElementById('conclusion-new-shares');
+  var conclusionExercisePriceDisplay = document.getElementById('conclusion-exercise-price');
+  var conclusionRatioDisplay = document.getElementById('conclusion-ratio');
+  var conclusionTotalCostDisplay = document.getElementById('conclusion-total-cost');
+  var conclusionNewAvgPriceDisplay = document.getElementById('conclusion-new-avg-price');
+  var theoreticalPriceDisplay = document.getElementById('theoretical-price');
+  var recommendationBox = document.getElementById('recommendation-box');
+  var recommendationText = document.getElementById('recommendation-text');
+
+  var calculateBtn = document.getElementById('calculate-btn');
+
+  // State
+  var state = {
+    ratioOld: 0,
+    ratioNew: 0,
+    rightPrice: 0,
+    currentShares: 0,
+    currentAvgPrice: 0,
+    cumDatePrice: 0
+  };
+
+  // Initialization
+  function init() {
+    initTheme();
+    setupEventListeners();
+  }
+
+  function setupEventListeners() {
+    var allInputs = [
+      rightPriceInput, currentAvgPriceInput, cumDatePriceInput,
+      currentSharesInput, ratioOldInput, ratioNewInput
+    ];
+
+    // Scroll to input on focus
+    allInputs.forEach(function (input) {
+      input.addEventListener('focus', function (e) {
+        setTimeout(function () {
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      });
+    });
+
+    // Inputs that require currency formatting
+    [rightPriceInput, currentAvgPriceInput, cumDatePriceInput].forEach(function (input) {
+      input.addEventListener('input', function (e) { handleCurrencyInput(e); });
+    });
+
+    // Inputs that require number formatting (shares)
+    currentSharesInput.addEventListener('input', function (e) { handleNumberInput(e); });
+
+    // Ratio inputs
+    [ratioOldInput, ratioNewInput].forEach(function (input) {
+      input.addEventListener('input', function (e) { handleRatioInput(e); });
+    });
+
+    calculateBtn.addEventListener('click', calculate);
+  }
+
+  // Input Handlers
+  function handleRatioInput(e) {
+    var value = e.target.value.replace(/[^0-9.,]/g, '');
+    value = value.replace(/,/g, '.');
+    var parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+    e.target.value = value;
+
+    if (e.target.id === 'ratio-old') {
+      state.ratioOld = parseFloat(value) || 0;
+    } else {
+      state.ratioNew = parseFloat(value) || 0;
+    }
+
+    updateConclusionRatio();
+    validateInputs();
+  }
+
+  function handleCurrencyInput(e) {
+    var value = e.target.value.replace(/\D/g, '');
+    if (value.length > 6) {
+      value = value.slice(0, 6);
+    }
+    var numberValue = parseFloat(value) || 0;
+
+    if (e.target.id === 'right-price') {
+      state.rightPrice = numberValue;
+      updateNewAvgPrice();
+    } else if (e.target.id === 'current-avg-price') {
+      state.currentAvgPrice = numberValue;
+      updateCurrentTotalValue();
+    } else if (e.target.id === 'cum-date-price') {
+      state.cumDatePrice = numberValue;
+    }
+
+    if (value) {
+      e.target.value = formatCurrency(numberValue, false);
+    } else {
+      e.target.value = '';
+    }
+
+    validateInputs();
+  }
+
+  function handleNumberInput(e) {
+    var value = e.target.value.replace(/\D/g, '');
+    if (value.length > 13) {
+      value = value.slice(0, 13);
+    }
+    var numberValue = parseFloat(value) || 0;
+
+    if (e.target.id === 'current-shares') {
+      state.currentShares = numberValue;
+      updateCurrentTotalValue();
+    }
+
+    if (value) {
+      e.target.value = new Intl.NumberFormat('id-ID').format(numberValue);
+    } else {
+      e.target.value = '';
+    }
+
+    validateInputs();
+  }
+
+  // Real-time updates
+  function updateCurrentTotalValue() {
+    var total = state.currentShares * state.currentAvgPrice;
+    currentTotalValueDisplay.textContent = formatCurrency(total);
+  }
+
+  function updateNewAvgPrice() {
+    newAvgPriceDisplay.textContent = formatCurrency(state.rightPrice);
+    conclusionExercisePriceDisplay.textContent = formatCurrency(state.rightPrice);
+  }
+
+  function updateConclusionRatio() {
+    if (state.ratioOld && state.ratioNew) {
+      conclusionRatioDisplay.textContent = state.ratioOld + ':' + state.ratioNew;
+    } else {
+      conclusionRatioDisplay.textContent = '-';
+    }
+  }
+
+  // Validation
+  function validateInputs() {
+    var isValid =
+      state.ratioOld > 0 &&
+      state.ratioNew > 0 &&
+      state.rightPrice > 0 &&
+      state.currentShares > 0 &&
+      state.currentAvgPrice > 0 &&
+      state.cumDatePrice > 0;
+
+    calculateBtn.disabled = !isValid;
+
+    recommendationBox.classList.add('hidden');
+    recommendationBox.classList.remove('buy', 'sell');
+  }
+
+  // Calculation
+  function calculate() {
+    var newShares = (state.currentShares / state.ratioOld) * state.ratioNew;
+    var newTotalValue = newShares * state.rightPrice;
+    var finalShares = state.currentShares + newShares;
+    var currentTotalValue = state.currentShares * state.currentAvgPrice;
+    var finalTotalValue = currentTotalValue + newTotalValue;
+    var finalAvgPrice = finalTotalValue / finalShares;
+
+    var theoreticalPrice = (
+      (state.cumDatePrice * state.ratioOld) +
+      (state.rightPrice * state.ratioNew)
+    ) / (state.ratioOld + state.ratioNew);
+
+    newSharesCountDisplay.textContent = formatNumber(newShares);
+    newTotalValueDisplay.textContent = formatCurrency(newTotalValue);
+
+    finalSharesDisplay.textContent = formatNumber(finalShares);
+    finalAvgPriceDisplay.textContent = formatCurrency(finalAvgPrice);
+    finalTotalValueDisplay.textContent = formatCurrency(finalTotalValue);
+
+    theoreticalPriceDisplay.textContent = formatCurrency(theoreticalPrice);
+
+    conclusionNewSharesDisplay.textContent = formatNumber(newShares);
+    conclusionTotalCostDisplay.textContent = formatCurrency(newTotalValue);
+    conclusionNewAvgPriceDisplay.textContent = formatCurrency(finalAvgPrice);
+
+    var avgHargaBaru = finalAvgPrice;
+
+    recommendationBox.classList.remove('hidden', 'buy', 'sell');
+
+    if (avgHargaBaru < theoreticalPrice) {
+      recommendationBox.classList.add('buy');
+      recommendationText.textContent = "Harga average baru Anda masih di BAWAH harga teoritis, Anda masih berpeluang untung jika menebus Right Issue";
+    } else {
+      recommendationBox.classList.add('sell');
+      recommendationText.textContent = "Harga average baru Anda sudah di ATAS harga teoritisnya, Anda berpeluang rugi jika tetap menebus Right Issue";
+    }
+  }
+
+  // Utilities
+  function formatCurrency(number, withSymbol) {
+    if (withSymbol === undefined) withSymbol = true;
+    return new Intl.NumberFormat('id-ID', {
+      style: withSymbol ? 'currency' : 'decimal',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(number);
+  }
+
+  function formatNumber(number) {
+    return new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(number);
+  }
+
+  // Run
+  init();
+})();
+</script>
 </body>
-
 </html>
